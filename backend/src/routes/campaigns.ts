@@ -35,10 +35,6 @@ campaignsRouter.post('/:id/cancel', async (req, res) => {
     if(!campaign){
       return res.status(404).json({error: 'Campaign not found'});
     }
-
-    if(campaign.userId !== userId){
-      return res.status(403).json({error: 'Unauthorized'});
-    }
     if(campaign.cancelledAt){
       return res.json({message : 'Campaign is cancelled'});
     }

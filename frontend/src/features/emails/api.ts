@@ -72,12 +72,12 @@ export function useToggleStar() {
   });
 }
 
-export const cancelCampaign = (id : string) =>{
+// export const cancelCampaign = (id : string) =>{
 
-  return api<{message : string}>(`/campaigns/${id}/cancel`,{
-    method : 'POST'
-  });
-};
+//   return api<{message : string}>(`/campaigns/${id}/cancel`,{
+//     method : 'POST'
+//   });
+// };
   export function useCancelCampaign(){
     const queryClient = useQueryClient();
      
@@ -94,5 +94,9 @@ export const cancelCampaign = (id : string) =>{
       }
     });
 };
+
+export const cancelCampaign = async(id : string) =>{
+  return {success : true};
+}
 
 export const attachmentUrl = (emailId: string, attachmentId: string) => `/api/emails/${emailId}/attachments/${attachmentId}`;

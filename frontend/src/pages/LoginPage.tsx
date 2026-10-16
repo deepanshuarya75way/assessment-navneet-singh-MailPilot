@@ -16,8 +16,8 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   const [params, setParams] = useSearchParams();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('qwerty@gmail.com');
+  const [password, setPassword] = useState('Qwerty@123');
 
   useEffect(() => {
     const error = params.get('error');
@@ -27,9 +27,33 @@ export default function LoginPage() {
     }
   }, [params, setParams]);
 
-  const onEmailLogin = (e: FormEvent) => {
+  const onEmailLogin = async(e: FormEvent) => {
     e.preventDefault();
-    toast('Email login is not enabled — please continue with Google.');
+
+    try{
+      const res = await fetch('/api/auth/login', {
+        method : 'POST',
+        headers : {
+          'Content-Type' : 'application/json',
+        },
+          credentials : 'include',
+          body : JSON.stringify({email,password}),
+
+      });
+
+        if(res.ok){
+          window.location.href = '/scheduled';
+        }else{
+          const data  = await res.json();
+          toast.error(data.error || data.message || 'Login failed', {
+            id : 'login-error'
+          });
+
+    }
+    } catch(error){
+      console.error('Login error' , error);
+      toast.error('A network error occured', {id : 'login-error'});
+    }
   };
 
   return (

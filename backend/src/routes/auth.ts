@@ -16,8 +16,8 @@ const cookieBase: CookieOptions = { httpOnly: true, sameSite: 'lax', secure: isP
 const safeEqual = (a: string, b: string) =>
   a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
-const redirectToLogin = (res: Response, error: string) =>
-  res.redirect(`https://localhost:5174/dashboard`);
+const redirectToLogin = (res: Response, error: string) =>                      
+  res.redirect(`${env.FRONTEND_URL}/dashboard`);
 
 authRouter.get('/google', (_req, res) => {
   // CSRF protection for the OAuth round-trip

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
+import {useState} from 'react';
 import { IconButton } from '@/components/ui/IconButton';
 import { Spinner } from '@/components/ui/Spinner';
 import { useCurrentUser } from '@/features/auth/useCurrentUser';
@@ -75,6 +76,7 @@ export default function EmailDetailPage() {
   const navigate = useNavigate();
   const { data: user } = useCurrentUser();
   const { data: email, isLoading, error, refetch } = useEmail(id);
+  const [isCancelled, setIsCancelled] = useState(false);
   const {mutate : cancelCampaign, isPending : isCancelling} = useCancelCampaign();
   const backTo = email && ['SENT', 'FAILED'].includes(email.status) ? '/sent' : '/scheduled';
 
@@ -89,11 +91,12 @@ export default function EmailDetailPage() {
           <>
             <StatusBadge email={email} />
             <StarButton id={email.id} starred={email.starred} />
-            {email.status === 'SCHEDULED' && (
+            {(email.status === 'SCHEDULED' || isCancelled) && (
               <Button
               onClick={()=>{
                 if(window.confirm('Are you sure want to cancel this campaign?')){
                   cancelCampaign(email.id);
+                  setIsCancelled(true);
                 }
               }}
               variant = "outline"
@@ -101,7 +104,7 @@ export default function EmailDetailPage() {
               disabled = {isCancelling}
               className='ml-2 text-red-600 hover:bg-red-50 border-red-200 transition-colors'
               >
-                {isCancelling ? 'Cancelling...' : 'Cancel'}
+                {isCancelled ? 'Cancelled' : (isCancelling ? 'Cancelling...' : 'Cancel')}
               </Button>
             )}
           </>
