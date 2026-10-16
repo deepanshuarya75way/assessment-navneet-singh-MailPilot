@@ -5,6 +5,7 @@ import { SESSION_COOKIE, SESSION_TTL_SECONDS, signSession } from '../lib/jwt';
 import { logger } from '../lib/logger';
 import { currentUserId, requireAuth } from '../middleware/auth';
 import { buildGoogleAuthUrl, getUserProfile, loginWithGoogleCode } from '../services/authService';
+import jwt from 'jsonwebtoken';
 
 export const authRouter = Router();
 
@@ -59,10 +60,15 @@ authRouter.post('/logout', (_req, res) => {
 });
 
 authRouter.post('/login', async (req, res) => {
-  const email = req.body;
-  const mockUser = {
-    id : 'navneet',
-    email : email || 'qwerty@gmail.com'
-  };
-  res.json({user:mockUser});
+  try{
+    const {email} = req.body;
+    if(!email || typeof email !== 'string'){
+      return;
+    }
+
+    return res.status(200).json({message : "Login successful", email});
+
+  } catch (error){
+    return res.status(500).json({error : "Login Failed"});
+  }
 });
