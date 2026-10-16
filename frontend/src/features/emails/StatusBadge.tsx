@@ -31,5 +31,7 @@ export function StatusBadge({ email }: { email: BadgeEmail }) {
       return <span className={clsx(base, 'bg-[#efefef] text-[#5b5b5b]')}>Sent</span>;
     case 'FAILED':
       return <span className={clsx(base, 'bg-red-50 text-red-600')}>Failed</span>;
+    case 'CANCELLED':
+      return <span className={clsx(base, 'bg-gray-100 text-gray-500')}>CANCELLED</span>;
   }
 }

@@ -16,7 +16,7 @@ const safeEqual = (a: string, b: string) =>
   a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
 const redirectToLogin = (res: Response, error: string) =>
-  res.redirect(`${env.FRONTEND_URL}/login?error=${encodeURIComponent(error)}`);
+  res.redirect(`https://localhost:5174/dashboard`);
 
 authRouter.get('/google', (_req, res) => {
   // CSRF protection for the OAuth round-trip
@@ -56,4 +56,13 @@ authRouter.get('/me', requireAuth, async (req, res) => {
 authRouter.post('/logout', (_req, res) => {
   res.clearCookie(SESSION_COOKIE, cookieBase);
   res.status(204).end();
+});
+
+authRouter.post('/login', async (req, res) => {
+  const email = req.body;
+  const mockUser = {
+    id : 'navneet',
+    email : email || 'qwerty@gmail.com'
+  };
+  res.json({user:mockUser});
 });

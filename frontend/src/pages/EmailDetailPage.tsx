@@ -11,15 +11,17 @@ import { StarButton } from '@/features/emails/StarButton';
 import { StatusBadge } from '@/features/emails/StatusBadge';
 import { formatBytes, formatDateTime } from '@/lib/format';
 import type { EmailDetail } from '@/types/api';
+import { useCancelCampaign } from '@/features/emails/api';
 
 function StatusNote({ email }: { email: EmailDetail }) {
   const text = {
     SCHEDULED: `Scheduled to send ${formatDateTime(email.scheduledAt)}${
-      email.deferrals > 0 ? ` · moved ${email.deferrals}× by the hourly limit` : ''
+      (email.deferrals ?? 0) > 0 ? ` · moved ${email.deferrals}× by the hourly limit` : ''
     }`,
     SENDING: 'Sending now…',
     SENT: `Sent ${formatDateTime(email.sentAt ?? email.scheduledAt)}`,
     FAILED: `Failed ${email.failedAt ? formatDateTime(email.failedAt) : ''}${email.error ? ` · ${email.error}` : ''}`,
+    CANCELLED : 'CANCELLED'
   }[email.status];
 
   return (
@@ -73,6 +75,7 @@ export default function EmailDetailPage() {
   const navigate = useNavigate();
   const { data: user } = useCurrentUser();
   const { data: email, isLoading, error, refetch } = useEmail(id);
+  const {mutate : cancelCampaign, isPending : isCancelling} = useCancelCampaign();
   const backTo = email && ['SENT', 'FAILED'].includes(email.status) ? '/sent' : '/scheduled';
 
   return (
@@ -86,6 +89,21 @@ export default function EmailDetailPage() {
           <>
             <StatusBadge email={email} />
             <StarButton id={email.id} starred={email.starred} />
+            {email.status === 'SCHEDULED' && (
+              <Button
+              onClick={()=>{
+                if(window.confirm('Are you sure want to cancel this campaign?')){
+                  cancelCampaign(email.id);
+                }
+              }}
+              variant = "outline"
+              size = "sm"
+              disabled = {isCancelling}
+              className='ml-2 text-red-600 hover:bg-red-50 border-red-200 transition-colors'
+              >
+                {isCancelling ? 'Cancelling...' : 'Cancel'}
+              </Button>
+            )}
           </>
         )}
         <span className="mx-1 hidden h-6 w-px bg-line sm:block" />

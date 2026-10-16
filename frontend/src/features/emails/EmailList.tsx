@@ -37,11 +37,11 @@ export function EmailList({ tab, emails, isLoading, error, onRetry, empty, hasMo
   const sentinel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!hasMore || !onLoadMore || !sentinel.current) return;
-    const observer = new IntersectionObserver(([entry]) => entry.isIntersecting && onLoadMore(), { rootMargin: '200px' });
+    if (!hasMore || !onLoadMore || !sentinel.current || loadingMore) return;
+    const observer = new IntersectionObserver(([entry]) => {if(entry.isIntersecting) onLoadMore();}, { rootMargin: '200px' });
     observer.observe(sentinel.current);
     return () => observer.disconnect();
-  }, [hasMore, onLoadMore]);
+  }, [hasMore, onLoadMore, loadingMore]);
 
   if (isLoading) return <SkeletonRows />;
   if (error && emails.length === 0) {

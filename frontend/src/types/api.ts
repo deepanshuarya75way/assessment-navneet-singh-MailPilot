@@ -6,7 +6,7 @@ export interface CurrentUser {
   slack: { connected: false } | { connected: true; teamName: string; channel: string };
 }
 
-export type EmailStatus = 'SCHEDULED' | 'SENDING' | 'SENT' | 'FAILED';
+export type EmailStatus = 'SCHEDULED' | 'SENDING' | 'SENT' | 'FAILED' | 'CANCELLED';
 export type MailboxTab = 'scheduled' | 'sent';
 export type EmailFilter = 'all' | 'starred' | 'failed';
 

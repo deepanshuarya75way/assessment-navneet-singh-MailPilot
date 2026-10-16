@@ -72,4 +72,27 @@ export function useToggleStar() {
   });
 }
 
+export const cancelCampaign = (id : string) =>{
+
+  return api<{message : string}>(`/campaigns/${id}/cancel`,{
+    method : 'POST'
+  });
+};
+  export function useCancelCampaign(){
+    const queryClient = useQueryClient();
+     
+    return useMutation({
+      mutationFn : cancelCampaign,
+      onSuccess: () => {
+        toast.success(`Campaign cancelled successfully`);
+      },
+      onError: (err : Error) => {
+        toast.error(err.message || 'Failed to cancel campaign');
+      },
+      onSettled: ()=>{
+        queryClient.invalidateQueries({queryKey : emailKeys.all});
+      }
+    });
+};
+
 export const attachmentUrl = (emailId: string, attachmentId: string) => `/api/emails/${emailId}/attachments/${attachmentId}`;

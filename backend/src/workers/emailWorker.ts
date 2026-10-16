@@ -35,7 +35,7 @@ async function handleUnclaimable(job: Job<EmailJobData>, token: string | undefin
     select: { status: true, scheduledAt: true, lockedAt: true },
   });
   if (!email) return { skipped: 'email no longer exists' };
-  if (email.status === 'SENT' || email.status === 'FAILED') return { skipped: `already ${email.status}` };
+  if (email.status === 'SENT' || email.status === 'FAILED' || email.status === 'CANCELLED') return { skipped: `already ${email.status}` };
   if (email.status === 'SENDING' && email.lockedAt) {
     // A previous attempt (whose worker likely crashed) may still be mid-send. Check back once its lock expires.
     return deferJob(job, token, email.lockedAt.getTime() + SEND_LOCK_TTL_MS);
